@@ -1,9 +1,13 @@
 const express = require('express');
 const pool = require('../modules/pool');
 const router = express.Router();
+const { rejectUnauthenticated } = require('../modules/authentication-middleware');
 
-router.get('/', (req, res) => {
+
+router.get('/', rejectUnauthenticated, (req, res) => {
     console.log('req.user:', req.user);
+    console.log('/secrets GET route');
+    console.log('is authenticated?', req.isAuthenticated() );
     pool.query('SELECT * FROM "secret";')
         .then(results => res.send(results.rows))
         .catch(error => {
